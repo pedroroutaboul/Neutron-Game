@@ -1,3 +1,5 @@
+allowedRange = [11,12,13,14,15,21,22,23,24,25,31,32,33,34,35,41,42,43,44,45,51,52,53,54,55]
+
 class Piece {
 	constructor(position, rank, name) {
 		this.position = position;
@@ -16,69 +18,185 @@ class Piece {
 		this.position = parseInt(position);
 	}
 
-	getMovesTop() {
-		const movesTop = [];
-		for (let move = this.position+10; move <= 88; move+=10) movesTop.push(move);
-		return movesTop;
+	getAllowedMoves(blockedPositions) {
+			const position = this.position;
+			// const mathSign = (this.color == 'white')? '+': '-';
+
+			// const allowedMoves = [eval(position + mathSign +'10' )];
+			
+			const moveAhead = this.getMoveAhead(position, blockedPositions)
+			const moveBottom = this.getMoveBottom(position, blockedPositions)
+			const moveRight = this.getMoveRight(position, blockedPositions)
+			const moveLeft = this.getMoveLeft(position, blockedPositions)
+			const moveUpLeft = this.getMoveUpLeft(position, blockedPositions)
+			const moveUpRight = this.getMoveUpRight(position, blockedPositions)
+			const moveDownRight = this.getMoveDownRight(position, blockedPositions)
+			const moveDownLeft = this.getMoveDownLeft(position, blockedPositions)
+
+		
+			const allMoves = [moveBottom,moveAhead,moveRight,moveLeft,moveUpLeft,moveUpRight,moveDownRight,moveDownLeft];
+
+			console.log('moveAhead',moveAhead)
+			console.log('moveBottom',moveBottom)
+			console.log('moveRight',moveRight);
+			console.log('moveLeft',moveLeft);
+			console.log('moveUpLeft',moveUpLeft);
+
+
+
+			console.log('allMoves',allMoves);
+
+			return allMoves;
 	}
 
-	getMovesBottom() {
-		const movesBottom = [];
-		for (let move = this.position-10; move >= 11 ; move-=10) movesBottom.push(move);
-		return movesBottom;
+	changePosition(position, promote=false) {
+		this.position = parseInt(position);
 	}
 
-	getMovesRight() {
-		const num = this.position+'';
-		const movesRight = [];
-		for (let move = this.position+1; move <= parseInt(num[0]+'8'); move++) movesRight.push(move);
-		return movesRight;
-	}
-
-	getMovesLeft() {
-		const num = this.position+'';
-		const movesLeft = [];
-		for (let move = this.position-1; move >= parseInt(num[0]+'1'); move--) movesLeft.push(move);
-		return movesLeft;
-	}
-
-	getMovesTopRight() {
-		const movesTopRight = [];
-		for (let move = this.position+11; move <= 88; move+=11) {
-			const firstDigit = (''+move)[1];
-			if (firstDigit > 8 || firstDigit < 1) break;
-			movesTopRight.push(move);
+	getMoveAhead(position,blockedPositions){
+		if (parseInt(position)>50) {
+			return '0'
 		}
-		return movesTopRight;
+		let allowedMoveAhead = []
+
+		let aheadPosition = parseInt(position) + 10
+		while (aheadPosition < 60) {
+			if (blockedPositions.indexOf(aheadPosition) === -1){
+				allowedMoveAhead.push(aheadPosition);}
+			else{break}	
+			aheadPosition = aheadPosition + 10
+		}
+		
+
+		// agarrando el mas grande
+		let allowedMoveAheadInt = allowedMoveAhead.map(function(x){
+			return parseInt(x)
+		})
+
+		return allowedMoveAheadInt.length === 0? '0' : Math.max(...allowedMoveAheadInt).toString()
+
 	}
 
-	getMovesTopLeft() {
-		const movesTopLeft = [];
-		for (let move = this.position+9; move <= 88; move+=9) {
-			const firstDigit = (''+move)[1];
-			if (firstDigit > 8 || firstDigit < 1) break;
-			movesTopLeft.push(move);
+	getMoveBottom(position,blockedPositions){
+		if (parseInt(position)<20) {
+			return '0'
 		}
-		return movesTopLeft;
+		let allowedMoveBottom = []
+
+		let bottomPosition = parseInt(position) -10
+		while ( bottomPosition > 10) {
+			if (blockedPositions.indexOf(bottomPosition) === -1){ 
+				allowedMoveBottom.push(bottomPosition);}
+			else{break}	
+			bottomPosition = bottomPosition - 10;
+
+		}
+		
+		// agarrando el mas chico
+		let allowedMoveBottomInt = allowedMoveBottom.map(function(x){
+			return parseInt(x)
+		})
+
+		return allowedMoveBottomInt.length === 0? '0' : Math.min(...allowedMoveBottomInt).toString()
+
 	}
 
-	getMovesBottomRight() {
-		const movesBottomRight = [];
-		for (let move = this.position-9; move >= 11 ; move-=9) {
-			const firstDigit = (''+move)[1];
-			if (firstDigit > 8 || firstDigit < 1) break;
-			movesBottomRight.push(move);
+	getMoveRight(position, blockedPositions){
+		if (!![15,25,35,45,55].find(element => element === parseInt(position))){
+			return '0'
 		}
-		return movesBottomRight;
+		let allowedMoveRight = [];
+		let rightPosition = parseInt(position) + 1
+		while (![16,26,36,46,56].find(x => x === rightPosition)){
+			if(!blockedPositions.find(x => x === rightPosition)){
+				allowedMoveRight.push(rightPosition)
+			}
+			else{break}
+			rightPosition++
+
+		}
+		return allowedMoveRight.length === 0? '0' : Math.max(...allowedMoveRight).toString()
+
+	}
+	getMoveLeft(position, blockedPositions){
+		if (!![11,21,31,41,51].find(element => element === parseInt(position))){
+			return '0'
+		}
+		let allowedMoveLeft = [];
+		let leftPosition = parseInt(position) - 1
+		while (![10,20,30,40,50].find(x => x === leftPosition)){
+			if(!blockedPositions.find(x => x === leftPosition)){
+				allowedMoveLeft.push(leftPosition)
+			}
+			else{break}
+			leftPosition--
+
+		}
+		return allowedMoveLeft.length === 0? '0' : Math.min(...allowedMoveLeft).toString()
+
 	}
 
-	getMovesBottomLeft() {
-		const movesBottomLeft = [];
-		for (let move = this.position-11; move >= 11 ; move-=11) {
-			const firstDigit = (''+move)[1];
-			if (firstDigit > 8 || firstDigit < 1) break;
-			movesBottomLeft.push(move);
+	getMoveUpLeft(position, blockedPositions){
+		if (!![11,21,31,41,51,52,53,54,55].find(element => element === parseInt(position))){
+			return '0'
 		}
-		return movesBottomLeft;
+		let allowedMove = [];
+		let nextPosition = parseInt(position) + 9
+		while(!!allowedRange.find(x => x === nextPosition)){
+			if(!blockedPositions.find(x => x === nextPosition)){
+				allowedMove.push(nextPosition)
+			}
+			else{break}
+			nextPosition = nextPosition + 9
+		}
+		return allowedMove.length === 0? '0' : Math.max(...allowedMove).toString()
+	}
+
+	getMoveUpRight(position, blockedPositions){
+		if (!![15,25,35,45,55,54,53,52,51].find(element => element === parseInt(position))){
+			return '0'
+		}
+		let allowedMove = [];
+		let nextPosition = parseInt(position) + 11
+		while(!!allowedRange.find(x => x === nextPosition)){
+			if(!blockedPositions.find(x => x === nextPosition)){
+				allowedMove.push(nextPosition)
+			}
+			else{break}
+			nextPosition = nextPosition + 11
+		}
+		return allowedMove.length === 0? '0' : Math.max(...allowedMove).toString()
+	}
+
+	getMoveDownRight(position, blockedPositions){
+		if (!![11,12,13,14,15,25,35,45,55].find(element => element === parseInt(position))){
+			return '0'
+		}
+		let allowedMove = [];
+		let nextPosition = parseInt(position) - 9 
+		while(!!allowedRange.find(x => x === nextPosition)){
+			if(!blockedPositions.find(x => x === nextPosition)){
+				allowedMove.push(nextPosition)
+			}
+			else{break}
+			nextPosition = nextPosition - 9
+		}
+		return allowedMove.length === 0? '0' : Math.min(...allowedMove).toString()
+	}
+
+	getMoveDownLeft(position, blockedPositions){
+		if (!![11,12,13,14,15,21,31,41,51].find(element => element === parseInt(position))){
+			return '0'
+		}
+		let allowedMove = [];
+		let nextPosition = parseInt(position) - 11 
+		while(!!allowedRange.find(x => x === nextPosition)){
+			if(!blockedPositions.find(x => x === nextPosition)){
+				allowedMove.push(nextPosition)
+			}
+			else{break}
+			nextPosition = nextPosition - 11
+		}
+		return allowedMove.length === 0? '0' : Math.min(...allowedMove).toString()
 	}
 }
