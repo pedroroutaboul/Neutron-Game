@@ -1,5 +1,5 @@
 *{
-	margin: 0;
+	margin: auto;
 	padding: 0;
 }
 body{
@@ -145,6 +145,10 @@ img{
 
 }
 #turn{
+	text-align: center;
+	font-size: 18px;
+}
+#rules{
 	text-align: center;
 	font-size: 18px;
 }
